@@ -51,13 +51,13 @@ def log():
             return redirect(url_for('tasks'))
     return render_template('log.html', error=error)
     
-@app.route('/new_task')
+@app.route('/new_task', methods=['POST'])
 @login_required
 def new_task():
         name = request.form['name']
         date = request.form['due_date']
         priority = request.form['priority']
-    
+        g.db = connect_db()
         g.db.execute('insert into ftasks (name, due_date, priority, status) values (?, ?, ?, 1)',
                      [request.form['name'], request.form['due_date'], request.form['priority']])
         g.db.commit()
@@ -83,8 +83,6 @@ def complete(task_id):
         g.db.close()
         flash('The task was marked as complete')
         return redirect(url_for('tasks'))
-      
-
     
 if __name__ == '__main__':
 #Bind to PORT if defined, otherwise default to 5000
